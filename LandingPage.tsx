@@ -234,7 +234,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onGetStarted }) => {
       {/* Footer */}
       <div className="px-6 py-6 border-t border-gray-100 dark:border-white/5 text-center">
         <p className="text-gray-400 text-xs">
-          Made with ❤️ for the construction industry
+          Made with ❤️ for the construction industry by <span className="font-bold text-coral">Gregorious Studio</span>
         </p>
       </div>
     </div>
