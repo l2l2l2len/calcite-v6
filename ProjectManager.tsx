@@ -1,7 +1,7 @@
 
 import React, { useContext, useState } from 'react';
-import { AppContext } from '../App';
-import { Project } from '../types';
+import { AppContext } from './App';
+import { Project } from './types';
 
 const ProjectManager: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const context = useContext(AppContext);

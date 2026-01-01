@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
-import { BOQItem } from '../types';
-import { UNIT_TO_M } from '../constants';
+import { BOQItem } from './types';
+import { UNIT_TO_M } from './constants';
 
 interface BrickCalcProps {
   onBack: () => void;

@@ -1,7 +1,7 @@
 
 import React, { useContext } from 'react';
-import { Screen } from '../types';
-import { AppContext } from '../App';
+import { Screen } from './types';
+import { AppContext } from './App';
 
 interface LayoutProps {
   children: React.ReactNode;

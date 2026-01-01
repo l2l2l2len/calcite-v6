@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { CONVERSION_RATES } from '../constants';
+import { CONVERSION_RATES } from './constants';
 
 const Converter: React.FC = () => {
   const [type, setType] = useState('length');

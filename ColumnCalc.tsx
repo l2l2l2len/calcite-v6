@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
-import { BOQItem } from '../types';
-import { MIX_RATIOS } from '../constants';
+import { BOQItem } from './types';
+import { MIX_RATIOS } from './constants';
 
 interface ColumnCalcProps {
   onBack: () => void;

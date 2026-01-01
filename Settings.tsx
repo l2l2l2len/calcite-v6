@@ -1,7 +1,7 @@
 
 import React, { useContext } from 'react';
-import { AppContext } from '../App';
-import { CURRENCIES } from '../constants';
+import { AppContext } from './App';
+import { CURRENCIES } from './constants';
 
 const Settings: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const context = useContext(AppContext);

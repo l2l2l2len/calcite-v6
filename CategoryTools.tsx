@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { CATEGORIES, TOOLS_LIBRARY } from '../constants';
-import { Screen } from '../types';
+import { CATEGORIES, TOOLS_LIBRARY } from './constants';
+import { Screen } from './types';
 
 interface Props {
   categoryId: string;

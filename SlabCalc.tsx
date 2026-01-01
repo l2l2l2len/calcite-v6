@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
-import { BOQItem, Currency } from '../types';
-import { MIX_RATIOS, UNIT_TO_M } from '../constants';
+import { BOQItem, Currency } from './types';
+import { MIX_RATIOS, UNIT_TO_M } from './constants';
 
 interface SlabCalcProps {
   onBack: () => void;
