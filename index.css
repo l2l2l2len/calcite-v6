@@ -15,9 +15,9 @@
     --color-mint: #7ECEC4;
     --color-cream: #FDF8F5;
 
-    --font-sans: 'DM Sans', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-    --font-serif: 'Playfair Display', serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, Monaco, monospace;
+    --font-serif: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }
 
 /* Custom styles */
