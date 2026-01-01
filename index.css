@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --color-peach-light: #F7E6DE;
+    --color-peach: #EABEAB;
+    --color-coral-light: #E8A090;
+    --color-coral: #D4857A;
+    --color-coral-deep: #C26A5E;
+    --color-ocean-light: #A8D5E5;
+    --color-ocean: #7CC4D8;
+    --color-ocean-deep: #3D7A8C;
+    --color-gold: #E8B864;
+    --color-mint: #7ECEC4;
+    --color-cream: #FDF8F5;
+
+    --font-sans: 'DM Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-serif: 'Playfair Display', serif;
+}
+
+/* Custom styles */
+body {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.glass {
+    background: rgba(253, 248, 245, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.dark .glass {
+    background: rgba(17, 24, 39, 0.95);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+.animate-slide-in {
+    animation: slideIn 0.3s ease-out forwards;
+}
+
+/* Disable scroll wheel on number inputs */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}

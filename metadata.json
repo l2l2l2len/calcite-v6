@@ -1,0 +1,7 @@
+{
+  "name": "CalcSite Pro — #1 Construction Suite",
+  "description": "Industrial-grade engineering and construction calculator suite. Professional tools for volume, cost, and code estimation.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
