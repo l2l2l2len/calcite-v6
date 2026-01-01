@@ -1,8 +1,8 @@
 
 import React, { useState, useMemo, useContext } from 'react';
-import { TOOLS_LIBRARY } from '../constants';
-import { Currency, BOQItem } from '../types';
-import { AppContext } from '../App';
+import { TOOLS_LIBRARY } from './constants';
+import { Currency, BOQItem } from './types';
+import { AppContext } from './App';
 
 interface Props {
   toolId: string;

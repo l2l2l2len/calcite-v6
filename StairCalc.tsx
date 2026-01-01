@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { BOQItem, Currency } from '../types';
+import { BOQItem, Currency } from './types';
 
 interface StairCalcProps {
   onBack: () => void;

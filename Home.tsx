@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
-import { Screen } from '../types';
-import { CATEGORIES, CALCULATORS, REFERENCE_TABLES, THUMB_RULES, TRADE_ICONS } from '../constants';
+import { Screen } from './types';
+import { CATEGORIES, CALCULATORS, REFERENCE_TABLES, THUMB_RULES, TRADE_ICONS } from './constants';
 
 interface HomeProps {
   onSelectCalc: (s: Screen) => void;

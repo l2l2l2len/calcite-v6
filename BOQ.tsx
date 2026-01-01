@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BOQItem, Currency } from '../types';
+import { BOQItem, Currency } from './types';
 
 interface BOQProps {
   items: BOQItem[];

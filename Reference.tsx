@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { THUMB_RULES, REFERENCE_TABLES } from '../constants';
+import { THUMB_RULES, REFERENCE_TABLES } from './constants';
 
 const Reference: React.FC = () => {
   const [openSection, setOpenSection] = useState<string | null>('mix-ratios');
