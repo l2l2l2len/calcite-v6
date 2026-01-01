@@ -9,6 +9,14 @@ interface HomeProps {
   selectedTrades: string[];
 }
 
+// Features to display on home page
+const FEATURES = [
+  { icon: '📐', title: '200+ Calculators', desc: 'From concrete mix to steel weight' },
+  { icon: '📊', title: 'Smart BOQ', desc: 'Auto-generate bill of quantities' },
+  { icon: '🤖', title: 'AI Assistant', desc: 'Get instant construction advice' },
+  { icon: '💰', title: 'Cost Estimation', desc: 'Real-time pricing in any currency' }
+];
+
 // Moved outside component to prevent recreation on every render
 const NATIVE_CALCULATORS = [
   { id: 'slab', name: 'Slab Concrete', trade: 'General Contractor', description: 'Volume & dry mix materials' },
@@ -45,6 +53,20 @@ const Home: React.FC<HomeProps> = ({ onSelectCalc, onSelectCategory, selectedTra
       <div className="mb-2">
         <h1 className="font-serif text-3xl font-bold dark:text-white leading-tight">CalcSite <span className="text-coral">Pro.</span></h1>
         <p className="text-[12px] text-gray-500 dark:text-gray-400 uppercase font-black tracking-widest mt-1">Industrial Grade Engineering Suite</p>
+      </div>
+
+      {/* Features Section */}
+      <div className="grid grid-cols-2 gap-3">
+        {FEATURES.map((feature, idx) => (
+          <div
+            key={idx}
+            className="bg-white dark:bg-gray-800 p-4 rounded-[20px] border border-gray-100 dark:border-white/5 shadow-sm"
+          >
+            <div className="text-2xl mb-2">{feature.icon}</div>
+            <h3 className="font-bold text-gray-900 dark:text-white text-sm leading-tight">{feature.title}</h3>
+            <p className="text-gray-400 text-[11px] mt-1">{feature.desc}</p>
+          </div>
+        ))}
       </div>
 
       <div className="relative group">

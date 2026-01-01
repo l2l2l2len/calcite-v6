@@ -213,7 +213,7 @@ const App: React.FC = () => {
   // Show landing page first for new users
   if (showLanding) {
     return (
-      <div className={`${viewMode === 'desktop' ? 'max-w-6xl' : 'max-w-md'} mx-auto h-screen bg-cream dark:bg-gray-900 overflow-hidden relative font-sans transition-all duration-300`}>
+      <div className={`${viewMode === 'desktop' ? 'max-w-6xl' : 'max-w-md'} mx-auto h-screen bg-cream dark:bg-gray-900 overflow-y-auto relative font-sans transition-all duration-300`}>
         <LandingPage onGetStarted={handleLandingCTA} />
       </div>
     );
