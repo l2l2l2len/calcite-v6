@@ -216,9 +216,7 @@ const App: React.FC = () => {
             boqCount={boqItems.length}
             onOpenAI={() => setShowAI(true)}
           >
-            <div className="h-full overflow-y-auto no-scrollbar">
-              {renderContent()}
-            </div>
+            {renderContent()}
           </Layout>
         )}
 

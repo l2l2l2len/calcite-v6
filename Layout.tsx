@@ -52,7 +52,7 @@ const Layout: React.FC<LayoutProps> = ({ children, currentScreen, onSwitchScreen
       </nav>
 
       {/* Main Content Area - pb-24 accounts for bottom nav height */}
-      <div className="flex-1 overflow-y-auto no-scrollbar pb-24">
+      <div className={`flex-1 overflow-y-auto pb-24 ${viewMode === 'mobile' ? 'no-scrollbar' : ''}`}>
         {children}
       </div>
 
