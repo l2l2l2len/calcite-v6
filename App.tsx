@@ -6,6 +6,7 @@ import { TRADES, CALCULATORS, CURRENCIES } from './constants';
 import Layout from './Layout';
 import Toast from './Toast';
 import Home from './Home';
+import LandingPage from './LandingPage';
 import SlabCalc from './SlabCalc';
 import SteelCalc from './SteelCalc';
 import BrickCalc from './BrickCalc';
@@ -85,6 +86,10 @@ const App: React.FC = () => {
   const [selectedToolId, setSelectedToolId] = useState<string | null>(null);
   const [showAI, setShowAI] = useState(false);
   const [toast, setToast] = useState<{ show: boolean, msg: string }>({ show: false, msg: '' });
+  const [showLanding, setShowLanding] = useState(() => {
+    const hasSeenLanding = localStorage.getItem('has_seen_landing');
+    return !hasSeenLanding && !appState.onboarded;
+  });
 
   useEffect(() => {
     localStorage.setItem('tradecalc_state_v4', JSON.stringify(appState));
@@ -115,6 +120,11 @@ const App: React.FC = () => {
   const handleOnboard = (trades: Trade[]) => {
     setAppState(prev => ({ ...prev, onboarded: true, selectedTrades: trades }));
     setCurrentScreen('home');
+  };
+
+  const handleLandingCTA = () => {
+    localStorage.setItem('has_seen_landing', 'true');
+    setShowLanding(false);
   };
 
   const renderContent = () => {
@@ -203,6 +213,15 @@ const App: React.FC = () => {
         return <Home onSelectCalc={setCurrentScreen} onSelectCategory={setSelectedCategoryId} selectedTrades={appState.selectedTrades} />;
     }
   };
+
+  // Show landing page first for new users
+  if (showLanding) {
+    return (
+      <div className={`${viewMode === 'desktop' ? 'max-w-6xl' : 'max-w-md'} mx-auto h-screen bg-cream dark:bg-gray-900 overflow-hidden relative font-sans transition-all duration-300`}>
+        <LandingPage onGetStarted={handleLandingCTA} />
+      </div>
+    );
+  }
 
   return (
     <AppContext.Provider value={{ activeProject, setActiveProject, currency, setCurrency, darkMode, setDarkMode, rates, updateRate, viewMode, setViewMode }}>
