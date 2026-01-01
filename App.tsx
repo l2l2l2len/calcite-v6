@@ -86,10 +86,7 @@ const App: React.FC = () => {
   const [selectedToolId, setSelectedToolId] = useState<string | null>(null);
   const [showAI, setShowAI] = useState(false);
   const [toast, setToast] = useState<{ show: boolean, msg: string }>({ show: false, msg: '' });
-  const [showLanding, setShowLanding] = useState(() => {
-    const hasSeenLanding = localStorage.getItem('has_seen_landing');
-    return !hasSeenLanding && !appState.onboarded;
-  });
+  const [showLanding, setShowLanding] = useState(true); // Always show landing on page load
 
   useEffect(() => {
     localStorage.setItem('tradecalc_state_v4', JSON.stringify(appState));
@@ -123,7 +120,6 @@ const App: React.FC = () => {
   };
 
   const handleLandingCTA = () => {
-    localStorage.setItem('has_seen_landing', 'true');
     setShowLanding(false);
   };
 
