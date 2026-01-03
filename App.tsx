@@ -21,6 +21,21 @@ import FootingCalc from './FootingCalc';
 import AIAssistant from './AIAssistant';
 import CategoryTools from './CategoryTools';
 import GenericCalc from './GenericCalc';
+import AboutPage from './AboutPage';
+import TermsPage from './TermsPage';
+import PrivacyPage from './PrivacyPage';
+import HelpPage from './HelpPage';
+
+// Safe JSON parse helper with error handling
+const safeJsonParse = <T,>(key: string, fallback: T): T => {
+  try {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : fallback;
+  } catch (e) {
+    console.warn(`Failed to parse localStorage key "${key}":`, e);
+    return fallback;
+  }
+};
 
 export const AppContext = createContext<{
   activeProject: Project;
@@ -35,24 +50,20 @@ export const AppContext = createContext<{
   setViewMode: (mode: 'mobile' | 'desktop') => void;
 } | null>(null);
 
+const DEFAULT_PROJECT: Project = { id: 'default', name: 'Main Site Estate', location: 'City Center', timestamp: Date.now() };
+const DEFAULT_RATES = { cement_bag: 450, steel_kg: 75, brick_nos: 10, labor_sqft: 200, concrete_m3: 6500 };
+const DEFAULT_APP_STATE: AppState = { onboarded: false, selectedTrades: [], units: 'imperial', history: [], favorites: [], jobConfigs: [] };
+
 const App: React.FC = () => {
-  const [activeProject, setActiveProject] = useState<Project>(() => {
-    const s = localStorage.getItem('active_project');
-    return s ? JSON.parse(s) : { id: 'default', name: 'Main Site Estate', location: 'City Center', timestamp: Date.now() };
-  });
+  const [activeProject, setActiveProject] = useState<Project>(() =>
+    safeJsonParse('active_project', DEFAULT_PROJECT)
+  );
 
   const [currency, setCurrency] = useState<Currency>(CURRENCIES[0]);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
-  const [rates, setRates] = useState<Record<string, number>>(() => {
-    const saved = localStorage.getItem('custom_rates');
-    return saved ? JSON.parse(saved) : {
-      cement_bag: 450,
-      steel_kg: 75,
-      brick_nos: 10,
-      labor_sqft: 200,
-      concrete_m3: 6500
-    };
-  });
+  const [rates, setRates] = useState<Record<string, number>>(() =>
+    safeJsonParse('custom_rates', DEFAULT_RATES)
+  );
 
   const updateRate = (id: string, val: number) => {
     setRates(prev => ({ ...prev, [id]: val }));
@@ -71,15 +82,13 @@ const App: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const [boqItems, setBoqItems] = useState<BOQItem[]>(() => {
-    const s = localStorage.getItem('boq_data');
-    return s ? JSON.parse(s) : [];
-  });
+  const [boqItems, setBoqItems] = useState<BOQItem[]>(() =>
+    safeJsonParse('boq_data', [])
+  );
 
-  const [appState, setAppState] = useState<AppState>(() => {
-    const saved = localStorage.getItem('tradecalc_state_v4');
-    return saved ? JSON.parse(saved) : { onboarded: false, selectedTrades: [], units: 'imperial', history: [], favorites: [], jobConfigs: [] };
-  });
+  const [appState, setAppState] = useState<AppState>(() =>
+    safeJsonParse('tradecalc_state_v4', DEFAULT_APP_STATE)
+  );
 
   const [currentScreen, setCurrentScreen] = useState<Screen>(appState.onboarded ? 'home' : 'onboarding');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
@@ -188,7 +197,7 @@ const App: React.FC = () => {
       case 'reference':
         return <Reference />;
       case 'settings':
-        return <Settings onBack={() => setCurrentScreen('home')} />;
+        return <Settings onBack={() => setCurrentScreen('home')} onNavigate={setCurrentScreen} />;
       case 'projects':
         return <ProjectManager onBack={() => setCurrentScreen('home')} />;
       case 'slab':
@@ -205,6 +214,14 @@ const App: React.FC = () => {
         return <ColumnCalc onBack={() => setCurrentScreen('home')} onAddBOQ={addBOQItem} />;
       case 'footing':
         return <FootingCalc onBack={() => setCurrentScreen('home')} onAddBOQ={addBOQItem} />;
+      case 'about':
+        return <AboutPage onBack={() => setCurrentScreen('home')} />;
+      case 'terms':
+        return <TermsPage onBack={() => setCurrentScreen('home')} />;
+      case 'privacy':
+        return <PrivacyPage onBack={() => setCurrentScreen('home')} />;
+      case 'help':
+        return <HelpPage onBack={() => setCurrentScreen('home')} />;
       default:
         return <Home onSelectCalc={setCurrentScreen} onSelectCategory={setSelectedCategoryId} selectedTrades={appState.selectedTrades} />;
     }
@@ -214,7 +231,7 @@ const App: React.FC = () => {
   if (showLanding) {
     return (
       <div className={`${viewMode === 'desktop' ? 'max-w-6xl' : 'max-w-md'} mx-auto h-screen bg-cream dark:bg-gray-900 overflow-y-auto no-scrollbar relative font-sans transition-all duration-300`}>
-        <LandingPage onGetStarted={handleLandingCTA} />
+        <LandingPage onGetStarted={handleLandingCTA} onNavigate={(screen) => { setShowLanding(false); setCurrentScreen(screen as Screen); }} />
       </div>
     );
   }
