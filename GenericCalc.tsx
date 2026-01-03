@@ -1,8 +1,7 @@
 
-import React, { useState, useMemo, useContext } from 'react';
+import React, { useState, useMemo } from 'react';
 import { TOOLS_LIBRARY } from './constants';
 import { Currency, BOQItem } from './types';
-import { AppContext } from './App';
 
 interface Props {
   toolId: string;
@@ -18,52 +17,77 @@ const GenericCalc: React.FC<Props> = ({ toolId, onBack, onAddBOQ, currency, rate
   // Early return if tool doesn't exist - must be before any hooks that depend on tool
   if (!tool) {
     return (
-      <div className="px-5 py-6 flex flex-col items-center justify-center h-full">
-        <div className="text-5xl mb-4 opacity-30">⚠️</div>
-        <p className="font-bold text-gray-500 dark:text-gray-400">Tool not found</p>
-        <button onClick={onBack} className="mt-6 px-6 py-3 bg-coral text-white rounded-xl font-bold">Go Back</button>
+      <div className="px-6 py-6 flex flex-col items-center justify-center h-full bg-surface-secondary dark:bg-navy">
+        <div className="card-enterprise rounded-2xl p-12 text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
+            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+              <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Tool Not Found</h3>
+          <p className="text-sm text-slate-light mb-6">The requested calculator could not be loaded.</p>
+          <button onClick={onBack} className="px-8 py-3 btn-primary text-white rounded-xl font-semibold">Go Back</button>
+        </div>
       </div>
     );
   }
 
-  const [values, setValues] = useState<Record<string, number>>(
-    tool.inputs.reduce((acc: Record<string, number>, curr: any) => ({ ...acc, [curr.key]: curr.default }), {})
+  const [values, setValues] = useState<Record<string, number | string>>(
+    tool.inputs.reduce((acc: Record<string, number | string>, curr: any) => ({ ...acc, [curr.key]: curr.default }), {})
   );
 
   const results = useMemo(() => {
     return tool.formula(values, rates);
   }, [values, rates, tool]);
 
+  const handleInputChange = (key: string, value: string, type: string = 'number') => {
+    if (type === 'number') {
+      const v = parseFloat(value);
+      setValues({ ...values, [key]: !isNaN(v) && v >= 0 ? v : 0 });
+    } else {
+      setValues({ ...values, [key]: value });
+    }
+  };
+
   return (
-    <div className="px-5 py-6 animate-slide-in">
+    <div className="px-6 py-6 pb-32 overflow-y-auto no-scrollbar h-full bg-surface-secondary dark:bg-navy animate-in slide-in-from-right duration-300">
+      {/* Header */}
       <div className="flex items-center gap-4 mb-8">
-        <button onClick={onBack} className="w-11 h-11 rounded-full border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-600 dark:text-white active:scale-90 transition-all shadow-sm">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path d="M19 12H5m7-7l-7 7 7 7" /></svg>
+        <button onClick={onBack} className="w-10 h-10 rounded-xl border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-600 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M19 12H5m7-7l-7 7 7 7" /></svg>
         </button>
         <div>
-          <div className="text-[10px] font-bold text-coral uppercase tracking-widest leading-none mb-1">{tool.category} WORK</div>
-          <h1 className="font-serif text-3xl font-bold dark:text-white leading-tight">{tool.name}</h1>
+          <div className="text-[10px] font-semibold text-accent uppercase tracking-widest leading-none mb-1">{tool.category?.toUpperCase()} WORKFLOW</div>
+          <h1 className="text-2xl font-bold dark:text-white leading-tight tracking-tight">{tool.name}</h1>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-[32px] p-8 mb-8 shadow-xl border border-coral/5 dark:border-white/5 flex flex-col items-center">
-        <div className="w-full h-32 mb-6 bg-gray-50 dark:bg-white/5 rounded-2xl flex items-center justify-center">
-          <div className="text-6xl animate-pulse">{tool.icon}</div>
-        </div>
-        <div className="text-center">
-          <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1">Estimated Output</div>
-          <div className="font-mono text-4xl font-bold text-coral flex items-baseline gap-2 justify-center">
-            {results.mainValue.toFixed(2)}
-            <span className="text-lg opacity-60 uppercase">{results.mainUnit}</span>
+      {/* Result Card */}
+      <div className="card-enterprise rounded-2xl p-6 mb-6">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-16 h-16 rounded-xl bg-accent/10 flex items-center justify-center text-3xl">
+            {tool.icon}
+          </div>
+          <div className="flex-1">
+            <div className="text-[10px] font-semibold text-slate-light uppercase tracking-widest mb-1">Result</div>
+            <div className="font-mono text-3xl font-bold text-accent flex items-baseline gap-2">
+              {typeof results.mainValue === 'number' ? results.mainValue.toFixed(2) : results.mainValue}
+              <span className="text-sm opacity-60 uppercase">{results.mainUnit}</span>
+            </div>
           </div>
         </div>
+
+        {/* Description */}
+        <p className="text-sm text-slate-light mb-4">{tool.description}</p>
       </div>
 
-      <div className="space-y-6 mb-10">
-        {tool.inputs.map(input => (
-          <div key={input.key} className="space-y-2">
-            <label className="text-[13px] font-bold text-gray-500 dark:text-gray-400 ml-1">{input.label}</label>
-            <div className="flex gap-2">
+      {/* Inputs */}
+      <div className="space-y-4 mb-6">
+        <h3 className="text-[10px] font-semibold uppercase tracking-widest text-slate-light px-1">Input Parameters</h3>
+        {tool.inputs.map((input: any) => (
+          <div key={input.key} className="card-enterprise p-4 rounded-xl">
+            <label className="text-[12px] font-semibold text-slate-light mb-2 block">{input.label}</label>
+            <div className="flex gap-3 items-center">
               <input
                 type="number"
                 min="0"
@@ -71,49 +95,61 @@ const GenericCalc: React.FC<Props> = ({ toolId, onBack, onAddBOQ, currency, rate
                 value={values[input.key] || ''}
                 onWheel={e => (e.target as HTMLInputElement).blur()}
                 onFocus={e => e.target.select()}
-                onChange={e => { const v = parseFloat(e.target.value); setValues({ ...values, [input.key]: !isNaN(v) && v >= 0 ? v : 0 }); }}
-                className="flex-1 px-6 py-4 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-white/5 rounded-2xl font-mono text-xl font-bold focus:border-coral outline-none transition-all dark:text-white shadow-sm"
+                onChange={e => handleInputChange(input.key, e.target.value, 'number')}
+                className="flex-1 px-4 py-3 bg-surface-tertiary dark:bg-white/5 rounded-xl font-mono text-lg font-semibold focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none border border-gray-200 dark:border-white/10 transition-all dark:text-white"
               />
-              <div className="w-16 flex items-center justify-center font-bold text-xs text-coral bg-coral/5 rounded-2xl border-2 border-coral/10">
-                {input.unit}
-              </div>
+              {input.unit && (
+                <div className="min-w-[60px] px-3 py-3 flex items-center justify-center font-semibold text-xs text-accent bg-accent/5 rounded-xl border border-accent/10">
+                  {input.unit}
+                </div>
+              )}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-[32px] overflow-hidden shadow-2xl border border-coral/5 dark:border-white/5 mb-8">
-        <div className="bg-gray-900 p-8">
-          <div className="grid grid-cols-2 gap-4">
-            {results.details.map((d, i) => (
-              <div key={i} className="p-4 bg-white/5 rounded-xl border-l-2 border-coral">
-                <div className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">{d.label}</div>
-                <div className="font-mono text-lg font-bold text-white leading-none">{d.value} <span className="text-[10px] opacity-40">{d.unit}</span></div>
+      {/* Details Breakdown */}
+      {results.details && results.details.length > 0 && (
+        <div className="bg-navy dark:bg-navy-light/20 rounded-2xl p-5 mb-6">
+          <h3 className="text-[10px] font-semibold uppercase tracking-widest text-white/60 mb-4">Calculation Breakdown</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {results.details.map((d: any, i: number) => (
+              <div key={i} className="p-4 bg-white/5 rounded-xl border-l-2 border-accent">
+                <div className="text-[9px] font-semibold text-white/50 uppercase tracking-widest mb-1">{d.label}</div>
+                <div className="font-mono text-base font-bold text-white leading-none">
+                  {d.value} <span className="text-[10px] opacity-40">{d.unit}</span>
+                </div>
               </div>
             ))}
           </div>
         </div>
+      )}
 
-        <div className="p-8">
-          <div className="flex justify-between items-center mb-8 px-2">
-            <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">Est. Cost</span>
+      {/* Cost and BOQ Button */}
+      <div className="card-enterprise rounded-2xl p-6">
+        {results.cost > 0 && (
+          <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100 dark:border-white/5">
+            <span className="text-sm font-semibold text-slate-light uppercase tracking-widest">Est. Cost</span>
             <span className="font-mono text-2xl font-bold text-gray-900 dark:text-white">
               {currency.symbol}{Math.round(results.cost).toLocaleString()}
             </span>
           </div>
+        )}
 
-          <button
-            onClick={() => onAddBOQ({
-              name: tool.name,
-              detail: Object.entries(values).map(([k, v]) => `${k}:${v}`).join(', '),
-              amount: results.cost,
-              type: tool.id
-            })}
-            className="w-full py-5 bg-coral text-white rounded-[22px] font-bold shadow-xl active:scale-95 transition-all text-lg"
-          >
-            Save to BOQ
-          </button>
-        </div>
+        <button
+          onClick={() => onAddBOQ({
+            name: tool.name,
+            detail: Object.entries(values).map(([k, v]) => `${k}:${v}`).join(', '),
+            amount: results.cost || 0,
+            type: tool.id
+          })}
+          className="w-full py-4 btn-primary text-white rounded-xl font-semibold shadow-accent active:scale-95 transition-all flex items-center justify-center gap-2"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+            <path d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Add to BOQ
+        </button>
       </div>
     </div>
   );

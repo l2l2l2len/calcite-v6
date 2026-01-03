@@ -197,10 +197,108 @@ export const CATEGORIES = [
   { id: 'concrete', name: 'Concrete', icon: '🏗️', count: 6 },
   { id: 'steel', name: 'Steel', icon: '⚙️', count: 4 },
   { id: 'masonry', name: 'Masonry', icon: '🧱', count: 3 },
-  { id: 'finishing', name: 'Finishing', icon: '🖌️', count: 5 }
+  { id: 'finishing', name: 'Finishing', icon: '🖌️', count: 5 },
+  { id: 'electrical', name: 'Electrical', icon: '⚡', count: 2 },
+  { id: 'hvac', name: 'HVAC', icon: '❄️', count: 1 }
 ];
 
 export const TOOLS_LIBRARY: Record<string, any> = {
+  // Electrical Tools
+  'elec-load': {
+    id: 'elec-load',
+    name: 'NEC Load Calculator',
+    category: 'electrical',
+    icon: '⚡',
+    description: 'General lighting load, appliance demand, and service sizing per NEC 220.',
+    inputs: [
+      { key: 'sqft', label: 'Living Area', default: 2000, unit: 'sq ft' },
+      { key: 'appliances', label: 'Fastened Appliances (Qty)', default: 4, unit: 'nos' },
+      { key: 'applianceVA', label: 'Total Appliance VA', default: 6000, unit: 'VA' },
+      { key: 'ranges', label: 'Electric Ranges (Qty)', default: 1, unit: 'nos' }
+    ],
+    formula: (v: any) => {
+      const lightingVA = (v.sqft || 0) * 3;
+      let lightingDemand = lightingVA;
+      if (lightingVA > 3000) {
+        lightingDemand = 3000 + (lightingVA - 3000) * 0.35;
+      }
+      let appDemand = v.applianceVA || 0;
+      if (v.appliances >= 4) appDemand *= 0.75;
+      const rangeDemand = (v.ranges || 0) > 0 ? 8000 : 0;
+      const totalVA = lightingDemand + appDemand + rangeDemand;
+      const amps = Math.ceil(totalVA / 240);
+      return {
+        mainValue: amps,
+        mainUnit: 'A Service',
+        details: [
+          { label: 'Lighting Load', value: `${lightingVA}`, unit: 'VA' },
+          { label: 'Lighting Demand (NEC 220.42)', value: lightingDemand.toFixed(0), unit: 'VA' },
+          { label: 'Appliance Demand', value: appDemand.toFixed(0), unit: 'VA' },
+          { label: 'Range Demand', value: `${rangeDemand}`, unit: 'VA' },
+          { label: 'Total VA', value: totalVA.toFixed(0), unit: 'VA' }
+        ],
+        cost: 0
+      };
+    }
+  },
+  'wire-size': {
+    id: 'wire-size',
+    name: 'Wire Size & Voltage Drop',
+    category: 'electrical',
+    icon: '🔌',
+    description: 'Conductor sizing, ampacity, and voltage drop per NEC 310.15.',
+    inputs: [
+      { key: 'load', label: 'Load Current', default: 20, unit: 'A' },
+      { key: 'dist', label: 'Distance', default: 100, unit: 'ft' },
+      { key: 'voltage', label: 'Voltage', default: 120, unit: 'V' }
+    ],
+    formula: (v: any) => {
+      const current = (v.load || 0) * 1.25;
+      const res = 11.2;
+      const cm = 10380;
+      const vd = (2 * (v.load || 0) * (v.dist || 0) * res) / cm;
+      const vdPct = (vd / (v.voltage || 120)) * 100;
+      const status = vdPct < 3 ? 'OK' : 'High - Consider larger wire';
+      return {
+        mainValue: vdPct.toFixed(2),
+        mainUnit: '% VD',
+        details: [
+          { label: 'Design Current (×1.25)', value: current.toFixed(1), unit: 'A' },
+          { label: 'Voltage Drop', value: vd.toFixed(2), unit: 'V' },
+          { label: 'Status', value: status, unit: '' }
+        ],
+        cost: 0
+      };
+    }
+  },
+  // HVAC Tools
+  'hvac-load': {
+    id: 'hvac-load',
+    name: 'HVAC Load (Manual J)',
+    category: 'hvac',
+    icon: '❄️',
+    description: 'Cooling load tonnage, heating requirements, and BTU calculations.',
+    inputs: [
+      { key: 'sqft', label: 'Area', default: 1500, unit: 'sq ft' },
+      { key: 'type', label: 'Building Type', default: 'Residential', unit: '' }
+    ],
+    formula: (v: any) => {
+      const factors: Record<string, number> = { Residential: 30, Office: 40, Restaurant: 55 };
+      const btu = (v.sqft || 0) * (factors[v.type] || 30);
+      const tons = btu / 12000;
+      return {
+        mainValue: tons.toFixed(1),
+        mainUnit: 'Tons',
+        details: [
+          { label: 'Base Factor', value: `${factors[v.type] || 30}`, unit: 'BTU/sqft' },
+          { label: 'Total BTU', value: btu.toLocaleString(), unit: 'BTU' },
+          { label: 'Formula', value: `${btu.toLocaleString()} / 12,000`, unit: '' }
+        ],
+        cost: 0
+      };
+    }
+  },
+  // Original tools
   'excavation': {
     id: 'excavation',
     name: 'Earthwork / Excavation',
